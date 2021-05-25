@@ -1,35 +1,40 @@
 extends layout
 
 block content
+
   h1 #{title}: #{book.title}
+  
+  if book_instances.length
+  
+    p Delete the following copies before attempting to delete this Book. There cant be instances of a book that doesn't exist.
+  
+    div
 
-  if books.length
+      h4 Copies
+    
+        each books in book_instances
+          h4 ID: #{books._id}
 
-    p #[strong Delete the following books instances before attempting to delete this book.]
+          p #[strong Title:]
+            a(href=books.book.url) #{books.book.title}
+          p #[strong Imprint:] #{books.imprint}
 
-    div(style='margin-left:20px;margin-top:20px')
+          p #[strong Status:]
+          if books.status=='Available'
+            span.text-success #{books.status}
+          else if books.status=='Maintenance'
+            span.text-danger #{books.status}
+          else
+            span.text-warning #{books.status}
 
-      h4 Book Instances
-
-      dl
-      each val in books
-        li
-        a(href=val.url) #{val.book.title} : #{val.imprint} -
-        if val.status=='Available'
-          span.text-success #{val.status}
-        else if val.status=='Maintenance'
-          span.text-danger #{val.status}
-        else
-          span.text-warning #{val.status}
-        if val.status != 'Available'
-          //span  (Due: #{val.due_back} )
-          span  (Due: #{val.due_back_formatted} )
+          if books.status!='Available'
+            p #[strong Due back:] #{books.due_back_formatted}
 
   else
-    p Do you really want to delete this Book?
-
+    p Do want to delete this Book? It will be gone forever!
+    
     form(method='POST' action='')
       div.form-group
-        input#bookid.form-control(type='hidden',name='bookid', required='true', value=book._id )
+        input#id.form-control(type='hidden',name='id', required='true', value=book._id )
 
       button.btn.btn-primary(type='submit') Delete
